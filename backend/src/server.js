@@ -17,7 +17,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use(clerkMiddleware());
-app.use(arcjetMiddleware);
+//app.use(arcjetMiddleware);  //Arcjet is causing a 403/500 error in Vercel
 
 app.get("/", (req, res) => res.send("Hello from server"));
 
