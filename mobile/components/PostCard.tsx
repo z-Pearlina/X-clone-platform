@@ -2,6 +2,7 @@ import { Post, User } from "@/types";
 import { formatDate, formatNumber } from "@/utils/formatters";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import { View, Text, Alert, Image, TouchableOpacity } from "react-native";
+import { Link } from "expo-router";
 
 interface PostCardProps {
   post: Post;
@@ -13,7 +14,11 @@ interface PostCardProps {
 }
 
 const PostCard = ({ currentUser, onDelete, onLike, post, isLiked, onComment }: PostCardProps) => {
-  const isOwnPost = post.user._id === currentUser._id;
+    if (!post.user) {
+    return null;
+  }
+
+  const isOwnPost = post.user?._id === currentUser?._id;
 
   const handleDelete = () => {
     Alert.alert("Delete Post", "Are you sure you want to delete this post?", [
@@ -29,23 +34,28 @@ const PostCard = ({ currentUser, onDelete, onLike, post, isLiked, onComment }: P
   return (
     <View className="border-b border-gray-100 bg-white">
       <View className="flex-row p-4">
-        <Image
-          source={{ uri: post.user.profilePicture || "" }}
-          className="w-12 h-12 rounded-full mr-3"
-        />
+        <Link href={`/profile/${post.user.username}`}>
+          <Image
+            source={{ uri: post.user.profilePicture || "" }}
+            className="w-12 h-12 rounded-full mr-3"
+          />
+        </Link>
 
         <View className="flex-1">
           <View className="flex-row items-center justify-between mb-1">
-            <View className="flex-row items-center">
-              <Text className="font-bold text-gray-900 mr-1">
-                {post.user.firstName} {post.user.lastName}
-              </Text>
-              <Text className="text-gray-500 ml-1">
-                @{post.user.username} · {formatDate(post.createdAt)}
-              </Text>
-            </View>
+            <Link href={`/profile/${post.user.username}`}>
+              <View className="flex-row items-center">
+                <Text className="font-bold text-gray-900 mr-1">
+                  {post.user.firstName} {post.user.lastName}
+                </Text>
+                <Text className="text-gray-500 ml-1">
+                  @{post.user.username} · {formatDate(post.createdAt)}
+                </Text>
+              </View>
+            </Link>
+
             {isOwnPost && (
-              <TouchableOpacity onPress={handleDelete}>
+              <TouchableOpacity onPress={handleDelete} className="pl-4">
                 <Feather name="trash" size={20} color="#657786" />
               </TouchableOpacity>
             )}

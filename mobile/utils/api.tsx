@@ -1,3 +1,5 @@
+// In utils/api.tsx
+
 import axios, { AxiosInstance } from "axios";
 import { useAuth } from "@clerk/clerk-expo";
 
@@ -28,7 +30,11 @@ export const useApiClient = (): AxiosInstance => {
 export const userApi = {
   syncUser: (api: AxiosInstance) => api.post("/users/sync"),
   getCurrentUser: (api: AxiosInstance) => api.get("/users/me"),
-  updateProfile: (api: AxiosInstance, data: any) => api.put("/users/profile", data),
+    getUserProfile: (api: AxiosInstance, username: string) => api.get(`/users/profile/${username}`),
+    updateProfile: (api: AxiosInstance, data: any) => api.put("/users/profile", data),
+    followUser: (api: AxiosInstance, targetUserId: string) => api.post(`/users/follow/${targetUserId}`),
+    getFollowers: (api: AxiosInstance, username: string) => api.get(`/users/profile/${username}/followers`),
+    getFollowing: (api: AxiosInstance, username: string) => api.get(`/users/profile/${username}/following`),
 };
 
 export const postApi = {
