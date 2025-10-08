@@ -1,3 +1,4 @@
+import EditProfileModal from "@/components/EditProfileModal";
 import PostsList from "@/components/PostsList";
 import SignOutButton from "@/components/SignOutButton";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
@@ -139,7 +140,14 @@ const ProfileScreens = () => {
         <PostsList username={currentUser?.username} />
       </ScrollView>
 
-      {/* Edit Profile Modal */}
+      <EditProfileModal
+        isVisible={isEditModalVisible}
+        onClose={closeEditModal}
+        formData={formData}
+        saveProfile={saveProfile}
+        updateFormField={updateFormField}
+        isUpdating={isUpdating}
+      />
     </SafeAreaView>
   );
 };
