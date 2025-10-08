@@ -32,14 +32,14 @@ const PostCard = ({ currentUser, onDelete, onLike, post, isLiked, onComment }: P
   };
 
   return (
-    // The main container now has a horizontal layout
+    
     <View className="flex-row p-4 border-b border-gray-100 bg-white">
       
       <Link href={`/profile/${post.user.username}`} asChild>
         <TouchableOpacity>
           <Image
             source={{ uri: post.user.profilePicture || "" }}
-            className="w-12 h-12 rounded-full mr-3" // mr-3 gives space to the right
+            className="w-12 h-12 rounded-full mr-3" 
           />
         </TouchableOpacity>
       </Link>
@@ -48,7 +48,7 @@ const PostCard = ({ currentUser, onDelete, onLike, post, isLiked, onComment }: P
       <View className="flex-1">
         
         <View className="flex-row justify-between items-center mb-1">
-          {/* We wrap the name/username in a view to keep them together */}
+          
           <Link href={`/profile/${post.user.username}`} asChild>
             <TouchableOpacity className="flex-shrink">
               <View className="flex-row items-baseline">
