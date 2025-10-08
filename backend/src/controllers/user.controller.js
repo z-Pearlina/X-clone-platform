@@ -100,3 +100,38 @@ export const followUser = asyncHandler(async (req, res) => {
     message: isFollowing ? "User unfollowed successfully" : "User followed successfully",
   });
 });
+
+
+export const getFollowers = asyncHandler(async (req, res) => {
+  const { username } = req.params;
+
+  const user = await User.findOne({ username });
+  if (!user) return res.status(404).json({ error: "User not found" });
+
+  // Find the user by ID and populate the 'followers' field with actual user data
+  const userWithFollowers = await User.findById(user._id).populate({
+    path: "followers",
+    select: "firstName lastName username profilePicture", 
+  });
+
+  if (!userWithFollowers) return res.status(404).json({ error: "User not found" });
+
+  res.status(200).json(userWithFollowers.followers);
+});
+
+export const getFollowing = asyncHandler(async (req, res) => {
+  const { username } = req.params;
+
+  const user = await User.findOne({ username });
+  if (!user) return res.status(404).json({ error: "User not found" });
+
+  // Find the user by ID and populate the 'following' field with actual user data
+  const userWithFollowing = await User.findById(user._id).populate({
+    path: "following",
+    select: "firstName lastName username profilePicture", 
+  });
+
+  if (!userWithFollowing) return res.status(404).json({ error: "User not found" });
+
+  res.status(200).json(userWithFollowing.following);
+});
