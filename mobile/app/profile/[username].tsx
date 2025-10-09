@@ -1,9 +1,8 @@
 import EditProfileModal from "@/components/EditProfileModal";
 import PostsList from "@/components/PostsList";
-import SignOutButton from "@/components/SignOutButton";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useProfile } from "@/hooks/useProfile";
-import { Feather } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons"; // <-- CHANGE: Import Ionicons
 import { format } from "date-fns";
 import {
   View,
@@ -15,21 +14,19 @@ import {
   RefreshControl,
 } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
-import { Link, useLocalSearchParams } from "expo-router";
+import { Link, useLocalSearchParams, useRouter } from "expo-router"; 
 import { useUser } from "@/hooks/useUser";
 import { usePosts } from "@/hooks/usePosts";
-import { useFollow } from "@/hooks/useFollow"; 
+import { useFollow } from "@/hooks/useFollow";
+
 const ProfileScreen = () => {
+  const router = useRouter(); 
   const { username } = useLocalSearchParams<{ username: string }>();
   const { user: profileUser, isLoading, refetch: refetchProfile } = useUser(username);
   const { currentUser } = useCurrentUser();
+  const { mutate: followUser, isPending: isFollowingUser } = useFollow(username);
 
- 
-    const { mutate: followUser, isPending: isFollowingUser } = useFollow(username);
-
-    const isFollowing = !!currentUser?.following?.includes(profileUser?._id);
-
-  
+  const isFollowing = !!currentUser?.following?.includes(profileUser?._id);
   const isMyProfile = currentUser?._id === profileUser?._id;
   const insets = useSafeAreaInsets();
   const {
@@ -47,7 +44,7 @@ const ProfileScreen = () => {
     isUpdating,
   } = useProfile();
 
-  if (isLoading) {
+  if (isLoading || !profileUser) {
     return (
       <View className="flex-1 bg-white items-center justify-center">
         <ActivityIndicator size="large" color="#1DA1F2" />
@@ -55,27 +52,29 @@ const ProfileScreen = () => {
     );
   }
 
-  if (!profileUser) {
-    return (
-      <View className="flex-1 bg-white items-center justify-center">
-        <Text className="text-lg text-gray-500">User not found.</Text>
-      </View>
-    );
-  }
-
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
-      {/* Header */}
-      <View className="flex-row items-center justify-between px-4 py-3 border-b border-gray-100">
-        <View>
-          <Text className="text-xl font-bold text-gray-900">
+      
+      <View className="flex-row items-center justify-between px-4 py-2 border-b border-gray-100">
+        
+        <TouchableOpacity onPress={() => router.back()} className="w-10">
+          <Ionicons name="arrow-back" size={24} color="#1DA1F2" />
+        </TouchableOpacity>
+
+        
+        <View className="items-center">
+          <Text className="text-lg font-bold text-gray-900">
             {profileUser.firstName} {profileUser.lastName}
           </Text>
           <Text className="text-gray-500 text-sm">{userPosts.length} Posts</Text>
         </View>
-        {isMyProfile && <SignOutButton />}
-      </View>
 
+        
+        <TouchableOpacity onPress={() => {}} className="w-10 items-end">
+          <Feather name="more-horizontal" size={24} color="#1DA1F2" />
+        </TouchableOpacity>
+      </View>
+      
       <ScrollView
         className="flex-1"
         contentContainerStyle={{ paddingBottom: 100 + insets.bottom }}
@@ -91,6 +90,7 @@ const ProfileScreen = () => {
           />
         }
       >
+        
         <Image
           source={{
             uri:
@@ -115,19 +115,15 @@ const ProfileScreen = () => {
                 <Text className="font-semibold text-gray-900">Edit profile</Text>
               </TouchableOpacity>
             ) : (
-                            <TouchableOpacity
+              <TouchableOpacity
                 className={`px-6 py-2 rounded-full ${
-                  isFollowing
-                    ? "bg-black border border-black"
-                    : "border border-gray-300"
+                  isFollowing ? "bg-black border border-black" : "border border-gray-300"
                 }`}
                 onPress={() => followUser(profileUser._id)}
                 disabled={isFollowingUser}
               >
                 <Text
-                  className={`font-semibold ${
-                    isFollowing ? "text-white" : "text-gray-900"
-                  }`}
+                  className={`font-semibold ${isFollowing ? "text-white" : "text-gray-900"}`}
                 >
                   {isFollowingUser ? (
                     <ActivityIndicator size="small" color={isFollowing ? "white" : "black"} />
@@ -138,11 +134,10 @@ const ProfileScreen = () => {
                   )}
                 </Text>
               </TouchableOpacity>
-                          )}
+            )}
           </View>
 
-          {/* ... The rest of your component remains the same ... */}
-           <View className="mb-4">
+          <View className="mb-4">
             <View className="flex-row items-center mb-1">
               <Text className="text-xl font-bold text-gray-900 mr-1">
                 {profileUser.firstName} {profileUser.lastName}
