@@ -7,8 +7,7 @@ import {
   updateProfile,
   getFollowers,
   getFollowing,
-  updateProfileImage, 
-  updateBannerImage, 
+  updateUserImages, 
 } from "../controllers/user.controller.js";
 import { protectRoute } from "../middleware/auth.middleware.js";
 import upload from "../middleware/upload.middleware.js"; 
@@ -26,18 +25,12 @@ router.get("/me", protectRoute, getCurrentUser);
 router.put("/profile", protectRoute, updateProfile);
 router.post("/follow/:targetUserId", protectRoute, followUser);
 
-// routes for image uploads
+
 router.put(
-  "/profile-image",
+  "/profile/image",
   protectRoute,
-  upload.single("image"),
-  updateProfileImage
-);
-router.put(
-  "/banner-image",
-  protectRoute,
-  upload.single("image"),
-  updateBannerImage
+  upload.single("image"), 
+  updateUserImages
 );
 
 export default router;

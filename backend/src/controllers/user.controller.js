@@ -1,7 +1,7 @@
 import asyncHandler from "express-async-handler";
 import User from "../models/user.model.js";
 import Notification from "../models/notification.model.js";
-import cloudinary from "../config/cloudinary.js";
+import { v2 as cloudinary } from "cloudinary";
 
 import { getAuth } from "@clerk/express";
 import { clerkClient } from "@clerk/express";
@@ -137,80 +137,49 @@ export const getFollowing = asyncHandler(async (req, res) => {
   res.status(200).json(userWithFollowing.following);
 });
 
-export const updateProfileImage = asyncHandler(async (req, res) => {
+export const updateUserImages = asyncHandler(async (req, res) => {
   const { userId } = getAuth(req);
+  const { type } = req.body; // 'profile' or 'banner'
   const imageFile = req.file;
 
   if (!imageFile) {
     return res.status(400).json({ error: "No image file provided" });
   }
 
+  if (!["profile", "banner"].includes(type)) {
+    return res.status(400).json({ error: "Invalid image type specified" });
+  }
+
   const user = await User.findOne({ clerkId: userId });
   if (!user) return res.status(404).json({ error: "User not found" });
 
+  let imageUrl = "";
   try {
     const base64Image = `data:${
       imageFile.mimetype
     };base64,${imageFile.buffer.toString("base64")}`;
 
     const uploadResponse = await cloudinary.uploader.upload(base64Image, {
-      folder: "social_media_profile",
+      folder: "social_media_user_images", // A different folder for user images
       resource_type: "image",
-      transformation: [
-        { width: 400, height: 400, crop: "limit" },
-        { quality: "auto" },
-        { format: "auto" },
-      ],
     });
-
-    user.profilePicture = uploadResponse.secure_url;
-    await user.save();
-
-    res.status(200).json({
-      message: "Profile image updated successfully",
-      user,
-    });
+    imageUrl = uploadResponse.secure_url;
   } catch (uploadError) {
     console.error("Cloudinary upload error:", uploadError);
     return res.status(400).json({ error: "Failed to upload image" });
   }
-});
 
-export const updateBannerImage = asyncHandler(async (req, res) => {
-  const { userId } = getAuth(req);
-  const imageFile = req.file;
+  // Determine which field to update
+  const fieldToUpdate =
+    type === "profile" ? "profilePicture" : "bannerImage";
 
-  if (!imageFile) {
-    return res.status(400).json({ error: "No image file provided" });
-  }
+  const updatedUser = await User.findByIdAndUpdate(
+    user._id,
+    { [fieldToUpdate]: imageUrl },
+    { new: true } // Return the updated document
+  );
 
-  const user = await User.findOne({ clerkId: userId });
-  if (!user) return res.status(404).json({ error: "User not found" });
-
-  try {
-    const base64Image = `data:${
-      imageFile.mimetype
-    };base64,${imageFile.buffer.toString("base64")}`;
-
-    const uploadResponse = await cloudinary.uploader.upload(base64Image, {
-      folder: "social_media_banners",
-      resource_type: "image",
-      transformation: [
-        { width: 1200, height: 400, crop: "limit" },
-        { quality: "auto" },
-        { format: "auto" },
-      ],
-    });
-
-    user.bannerImage = uploadResponse.secure_url;
-    await user.save();
-
-    res.status(200).json({
-      message: "Banner image updated successfully",
-      user,
-    });
-  } catch (uploadError) {
-    console.error("Cloudinary upload error:", uploadError);
-    return res.status(400).json({ error: "Failed to upload image" });
-  }
+  res
+    .status(200)
+    .json({ user: updatedUser, message: "Image updated successfully" });
 });
