@@ -9,6 +9,7 @@ import {
   getFollowing,
 } from "../controllers/user.controller.js";
 import { protectRoute } from "../middleware/auth.middleware.js";
+import upload from "../middleware/upload.middleware.js";
 
 const router = express.Router();
 
@@ -21,6 +22,19 @@ router.get("/profile/:username/following", getFollowing);
 router.post("/sync", protectRoute, syncUser);
 router.get("/me", protectRoute, getCurrentUser);
 router.put("/profile", protectRoute, updateProfile);
+router.post("/follow/:targetUserId", protectRoute, followUser);
+
+// profile picture and banner upload handling
+router.put(
+  "/profile",
+  protectRoute,
+  upload.fields([
+    { name: "profilePicture", maxCount: 1 },
+    { name: "banner", maxCount: 1 },
+  ]),
+  updateProfile
+);
+
 router.post("/follow/:targetUserId", protectRoute, followUser);
 
 export default router;
