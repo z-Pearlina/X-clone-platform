@@ -38,12 +38,11 @@ export const userApi = {
     api.get(`/users/profile/${username}/followers`),
   getFollowing: (api: AxiosInstance, username: string) =>
     api.get(`/users/profile/${username}/following`),
-  updateUserImage: (api: AxiosInstance, data: FormData) =>
-    api.put("/users/profile/image", data, {
-      headers: {
-        "Content-Type": "multipart/form-data", 
-      },
-    }),
+  
+  updateUserImage: (
+    api: AxiosInstance,
+    data: { type: "profile" | "banner"; image: string }
+  ) => api.put("/users/profile/image", data), 
 };
 
 export const postApi = {

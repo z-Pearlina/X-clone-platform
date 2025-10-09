@@ -10,7 +10,7 @@ import {
   updateUserImages, 
 } from "../controllers/user.controller.js";
 import { protectRoute } from "../middleware/auth.middleware.js";
-import upload from "../middleware/upload.middleware.js"; 
+import upload from "../middleware/upload.middleware.js";
 
 const router = express.Router();
 
@@ -25,12 +25,10 @@ router.get("/me", protectRoute, getCurrentUser);
 router.put("/profile", protectRoute, updateProfile);
 router.post("/follow/:targetUserId", protectRoute, followUser);
 
-
 router.put(
   "/profile/image",
   protectRoute,
-  upload.single("image"), 
-  updateUserImages
+  updateUserImages 
 );
 
 export default router;
