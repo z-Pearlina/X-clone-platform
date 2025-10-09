@@ -138,6 +138,9 @@ export const getFollowing = asyncHandler(async (req, res) => {
 });
 
 export const updateUserImages = asyncHandler(async (req, res) => {
+  console.log("Request Body:", req.body); // Should show the 'type' field
+  console.log("Request File:", req.file); // Should show file details if multer is working
+
   const { userId } = getAuth(req);
   const { type } = req.body; // 'profile' or 'banner'
   const imageFile = req.file;
