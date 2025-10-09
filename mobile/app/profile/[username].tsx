@@ -1,8 +1,9 @@
 import EditProfileModal from "@/components/EditProfileModal";
 import PostsList from "@/components/PostsList";
+import SignOutButton from "@/components/SignOutButton";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useProfile } from "@/hooks/useProfile";
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { format } from "date-fns";
 import {
   View,
@@ -13,28 +14,22 @@ import {
   TouchableOpacity,
   RefreshControl,
 } from "react-native";
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
-import { Link, useLocalSearchParams, useRouter } from "expo-router";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { Link, useLocalSearchParams } from "expo-router";
 import { useUser } from "@/hooks/useUser";
 import { usePosts } from "@/hooks/usePosts";
-import { useFollow } from "@/hooks/useFollow";
-import { useUpdateUserImages } from "@/hooks/useUpdateUserImages"; 
-
+import { useFollow } from "@/hooks/useFollow"; 
 const ProfileScreen = () => {
-  const router = useRouter();
   const { username } = useLocalSearchParams<{ username: string }>();
-  const {
-    user: profileUser,
-    isLoading,
-    refetch: refetchProfile,
-  } = useUser(username);
+  const { user: profileUser, isLoading, refetch: refetchProfile } = useUser(username);
   const { currentUser } = useCurrentUser();
-  const { mutate: followUser, isPending: isFollowingUser } = useFollow(username);
 
-  const isFollowing = !!currentUser?.following?.includes(profileUser?._id);
+ 
+    const { mutate: followUser, isPending: isFollowingUser } = useFollow(username);
+
+    const isFollowing = !!currentUser?.following?.includes(profileUser?._id);
+
+  
   const isMyProfile = currentUser?._id === profileUser?._id;
   const insets = useSafeAreaInsets();
   const {
@@ -52,10 +47,7 @@ const ProfileScreen = () => {
     isUpdating,
   } = useProfile();
 
-  
-  const { uploadImage, isUploading } = useUpdateUserImages(username!);
-
-  if (isLoading || !profileUser) {
+  if (isLoading) {
     return (
       <View className="flex-1 bg-white items-center justify-center">
         <ActivityIndicator size="large" color="#1DA1F2" />
@@ -63,23 +55,25 @@ const ProfileScreen = () => {
     );
   }
 
+  if (!profileUser) {
+    return (
+      <View className="flex-1 bg-white items-center justify-center">
+        <Text className="text-lg text-gray-500">User not found.</Text>
+      </View>
+    );
+  }
+
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
-      <View className="flex-row items-center justify-between px-4 py-2 border-b border-gray-100">
-        <TouchableOpacity onPress={() => router.back()} className="w-10">
-          <Ionicons name="arrow-back" size={24} color="#1DA1F2" />
-        </TouchableOpacity>
-        <View className="items-center">
-          <Text className="text-lg font-bold text-gray-900">
+      {/* Header */}
+      <View className="flex-row items-center justify-between px-4 py-3 border-b border-gray-100">
+        <View>
+          <Text className="text-xl font-bold text-gray-900">
             {profileUser.firstName} {profileUser.lastName}
           </Text>
-          <Text className="text-gray-500 text-sm">
-            {userPosts.length} Posts
-          </Text>
+          <Text className="text-gray-500 text-sm">{userPosts.length} Posts</Text>
         </View>
-        <TouchableOpacity onPress={() => {}} className="w-10 items-end">
-          <Feather name="more-horizontal" size={24} color="#1DA1F2" />
-        </TouchableOpacity>
+        {isMyProfile && <SignOutButton />}
       </View>
 
       <ScrollView
@@ -97,57 +91,31 @@ const ProfileScreen = () => {
           />
         }
       >
-        
-        <TouchableOpacity
-          onPress={() => isMyProfile && uploadImage("banner")}
-          disabled={!isMyProfile || isUploading}
-        >
-          <Image
-            source={{
-              uri:
-                profileUser.bannerImage ||
-                "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=400&fit=crop",
-            }}
-            className="w-full h-48"
-            resizeMode="cover"
-          />
-          
-          {isUploading && isMyProfile && (
-            <View className="absolute inset-0 bg-black/50 justify-center items-center">
-              <ActivityIndicator size="large" color="#FFFFFF" />
-            </View>
-          )}
-        </TouchableOpacity>
+        <Image
+          source={{
+            uri:
+              profileUser.bannerImage ||
+              "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=400&fit=crop",
+          }}
+          className="w-full h-48"
+          resizeMode="cover"
+        />
 
         <View className="px-4 pb-4 border-b border-gray-100">
           <View className="flex-row justify-between items-end -mt-16 mb-4">
-            <TouchableOpacity
-              onPress={() => isMyProfile && uploadImage("profile")}
-              disabled={!isMyProfile || isUploading}
-              className="relative"
-            >
-              <Image
-                source={{ uri: profileUser.profilePicture }}
-                className="w-32 h-32 rounded-full border-4 border-white"
-              />
-              {isUploading && isMyProfile && (
-                <View className="absolute inset-0 bg-black/50 rounded-full justify-center items-center">
-                  <ActivityIndicator size="small" color="#FFFFFF" />
-                </View>
-              )}
-            </TouchableOpacity>
-
+            <Image
+              source={{ uri: profileUser.profilePicture }}
+              className="w-32 h-32 rounded-full border-4 border-white"
+            />
             {isMyProfile ? (
               <TouchableOpacity
                 className="border border-gray-300 px-6 py-2 rounded-full"
                 onPress={openEditModal}
               >
-                <Text className="font-semibold text-gray-900">
-                  Edit profile
-                </Text>
+                <Text className="font-semibold text-gray-900">Edit profile</Text>
               </TouchableOpacity>
             ) : (
-              <TouchableOpacity
+                            <TouchableOpacity
                 className={`px-6 py-2 rounded-full ${
                   isFollowing
                     ? "bg-black border border-black"
@@ -162,10 +130,7 @@ const ProfileScreen = () => {
                   }`}
                 >
                   {isFollowingUser ? (
-                    <ActivityIndicator
-                      size="small"
-                      color={isFollowing ? "white" : "black"}
-                    />
+                    <ActivityIndicator size="small" color={isFollowing ? "white" : "black"} />
                   ) : isFollowing ? (
                     "Following"
                   ) : (
@@ -173,10 +138,11 @@ const ProfileScreen = () => {
                   )}
                 </Text>
               </TouchableOpacity>
-            )}
+                          )}
           </View>
 
-          <View className="mb-4">
+          {/* ... The rest of your component remains the same ... */}
+           <View className="mb-4">
             <View className="flex-row items-center mb-1">
               <Text className="text-xl font-bold text-gray-900 mr-1">
                 {profileUser.firstName} {profileUser.lastName}
@@ -185,23 +151,24 @@ const ProfileScreen = () => {
             </View>
             <Text className="text-gray-500 mb-2">@{profileUser.username}</Text>
             <Text className="text-gray-900 mb-3">{profileUser.bio}</Text>
+
             <View className="flex-row items-center mb-2">
               <Feather name="map-pin" size={16} color="#657786" />
               <Text className="text-gray-500 ml-2">{profileUser.location}</Text>
             </View>
+
             <View className="flex-row items-center mb-3">
               <Feather name="calendar" size={16} color="#657786" />
               <Text className="text-gray-500 ml-2">
                 Joined {format(new Date(profileUser.createdAt), "MMMM yyyy")}
               </Text>
             </View>
+
             <View className="flex-row">
               <Link href={`/profile/${username}/following`} asChild>
                 <TouchableOpacity className="mr-6">
                   <Text className="text-gray-900">
-                    <Text className="font-bold">
-                      {profileUser.following?.length || 0}
-                    </Text>
+                    <Text className="font-bold">{profileUser.following?.length || 0}</Text>
                     <Text className="text-gray-500"> Following</Text>
                   </Text>
                 </TouchableOpacity>
@@ -209,9 +176,7 @@ const ProfileScreen = () => {
               <Link href={`/profile/${username}/followers`} asChild>
                 <TouchableOpacity>
                   <Text className="text-gray-900">
-                    <Text className="font-bold">
-                      {profileUser.followers?.length || 0}
-                    </Text>
+                    <Text className="font-bold">{profileUser.followers?.length || 0}</Text>
                     <Text className="text-gray-500"> Followers</Text>
                   </Text>
                 </TouchableOpacity>

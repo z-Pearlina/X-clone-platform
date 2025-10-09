@@ -1,11 +1,9 @@
 import asyncHandler from "express-async-handler";
 import User from "../models/user.model.js";
 import Notification from "../models/notification.model.js";
-import { v2 as cloudinary } from "cloudinary";
 
 import { getAuth } from "@clerk/express";
 import { clerkClient } from "@clerk/express";
-
 
 export const getUserProfile = asyncHandler(async (req, res) => {
   const { username } = req.params;
@@ -18,9 +16,7 @@ export const getUserProfile = asyncHandler(async (req, res) => {
 export const updateProfile = asyncHandler(async (req, res) => {
   const { userId } = getAuth(req);
 
-  const user = await User.findOneAndUpdate({ clerkId: userId }, req.body, {
-    new: true,
-  });
+  const user = await User.findOneAndUpdate({ clerkId: userId }, req.body, { new: true });
 
   if (!user) return res.status(404).json({ error: "User not found" });
 
@@ -33,9 +29,7 @@ export const syncUser = asyncHandler(async (req, res) => {
   // check if user already exists in mongodb
   const existingUser = await User.findOne({ clerkId: userId });
   if (existingUser) {
-    return res
-      .status(200)
-      .json({ user: existingUser, message: "User already exists" });
+    return res.status(200).json({ user: existingUser, message: "User already exists" });
   }
 
   // create new user from Clerk data
@@ -68,14 +62,12 @@ export const followUser = asyncHandler(async (req, res) => {
   const { userId } = getAuth(req);
   const { targetUserId } = req.params;
 
-  if (userId === targetUserId)
-    return res.status(400).json({ error: "You cannot follow yourself" });
+  if (userId === targetUserId) return res.status(400).json({ error: "You cannot follow yourself" });
 
   const currentUser = await User.findOne({ clerkId: userId });
   const targetUser = await User.findById(targetUserId);
 
-  if (!currentUser || !targetUser)
-    return res.status(404).json({ error: "User not found" });
+  if (!currentUser || !targetUser) return res.status(404).json({ error: "User not found" });
 
   const isFollowing = currentUser.following.includes(targetUserId);
 
@@ -105,11 +97,10 @@ export const followUser = asyncHandler(async (req, res) => {
   }
 
   res.status(200).json({
-    message: isFollowing
-      ? "User unfollowed successfully"
-      : "User followed successfully",
+    message: isFollowing ? "User unfollowed successfully" : "User followed successfully",
   });
 });
+
 
 export const getFollowers = asyncHandler(async (req, res) => {
   const { username } = req.params;
@@ -120,11 +111,10 @@ export const getFollowers = asyncHandler(async (req, res) => {
   // Find the user by ID and populate the 'followers' field with actual user data
   const userWithFollowers = await User.findById(user._id).populate({
     path: "followers",
-    select: "firstName lastName username profilePicture",
+    select: "firstName lastName username profilePicture", 
   });
 
-  if (!userWithFollowers)
-    return res.status(404).json({ error: "User not found" });
+  if (!userWithFollowers) return res.status(404).json({ error: "User not found" });
 
   res.status(200).json(userWithFollowers.followers);
 });
@@ -138,55 +128,10 @@ export const getFollowing = asyncHandler(async (req, res) => {
   // Find the user by ID and populate the 'following' field with actual user data
   const userWithFollowing = await User.findById(user._id).populate({
     path: "following",
-    select: "firstName lastName username profilePicture",
+    select: "firstName lastName username profilePicture", 
   });
 
-  if (!userWithFollowing)
-    return res.status(404).json({ error: "User not found" });
+  if (!userWithFollowing) return res.status(404).json({ error: "User not found" });
 
   res.status(200).json(userWithFollowing.following);
-});
-
-
-export const updateUserImages = asyncHandler(async (req, res) => {
-  const { userId } = getAuth(req);
-  // We now get 'type' and the 'image' (base64 string) from the body
-  const { type, image: base64Image } = req.body;
-
-  if (!base64Image) {
-    return res.status(400).json({ error: "No image provided" });
-  }
-
-  if (!["profile", "banner"].includes(type)) {
-    return res.status(400).json({ error: "Invalid image type specified" });
-  }
-
-  const user = await User.findOne({ clerkId: userId });
-  if (!user) return res.status(404).json({ error: "User not found" });
-
-  let imageUrl = "";
-  try {
-    // Cloudinary can upload a base64 string directly
-    const uploadResponse = await cloudinary.uploader.upload(base64Image, {
-      folder: "social_media_user_images",
-      resource_type: "image",
-    });
-    imageUrl = uploadResponse.secure_url;
-  } catch (uploadError) {
-    console.error("Cloudinary upload error:", uploadError);
-    return res.status(400).json({ error: "Failed to upload image" });
-  }
-
-  const fieldToUpdate =
-    type === "profile" ? "profilePicture" : "bannerImage";
-
-  const updatedUser = await User.findByIdAndUpdate(
-    user._id,
-    { [fieldToUpdate]: imageUrl },
-    { new: true }
-  );
-
-  res
-    .status(200)
-    .json({ user: updatedUser, message: "Image updated successfully" });
 });
