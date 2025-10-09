@@ -32,23 +32,18 @@ const PostCard = ({ currentUser, onDelete, onLike, post, isLiked, onComment }: P
   };
 
   return (
-    
-    <View className="flex-row p-4 border-b border-gray-100 bg-white">
-      
+    <View className="flex-row items-start p-4 border-b border-gray-100 bg-white">
       <Link href={`/profile/${post.user.username}`} asChild>
         <TouchableOpacity>
           <Image
             source={{ uri: post.user.profilePicture || "" }}
-            className="w-12 h-12 rounded-full mr-3" 
+            className="w-12 h-12 rounded-full mr-3"
           />
         </TouchableOpacity>
       </Link>
 
-      
       <View className="flex-1">
-        
         <View className="flex-row justify-between items-center mb-1">
-          
           <Link href={`/profile/${post.user.username}`} asChild>
             <TouchableOpacity className="flex-shrink">
               <View className="flex-row items-baseline">
@@ -62,7 +57,6 @@ const PostCard = ({ currentUser, onDelete, onLike, post, isLiked, onComment }: P
             </TouchableOpacity>
           </Link>
 
-          
           {isOwnPost && (
             <TouchableOpacity onPress={handleDelete} className="pl-4">
               <Feather name="trash" size={18} color="#657786" />
@@ -70,7 +64,6 @@ const PostCard = ({ currentUser, onDelete, onLike, post, isLiked, onComment }: P
           )}
         </View>
 
-        
         {post.content && (
           <Text className="text-gray-900 text-base leading-5 mb-3">{post.content}</Text>
         )}
@@ -78,12 +71,11 @@ const PostCard = ({ currentUser, onDelete, onLike, post, isLiked, onComment }: P
         {post.image && (
           <Image
             source={{ uri: post.image }}
-            className="w-full h-72 rounded-xl mb-3" 
+            className="w-full h-72 rounded-xl mb-3"
             resizeMode="cover"
           />
         )}
 
-        
         <View className="flex-row justify-between max-w-xs mt-2">
           <TouchableOpacity className="flex-row items-center" onPress={() => onComment(post)}>
             <Feather name="message-circle" size={18} color="#657786" />
