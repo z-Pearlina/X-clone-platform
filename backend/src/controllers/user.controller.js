@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import User from "../models/user.model.js";
 import Notification from "../models/notification.model.js";
+import cloudinary from "../config/cloudinary.js";
 
 import { getAuth } from "@clerk/express";
 import { clerkClient } from "@clerk/express";
@@ -134,4 +135,82 @@ export const getFollowing = asyncHandler(async (req, res) => {
   if (!userWithFollowing) return res.status(404).json({ error: "User not found" });
 
   res.status(200).json(userWithFollowing.following);
+});
+
+export const updateProfileImage = asyncHandler(async (req, res) => {
+  const { userId } = getAuth(req);
+  const imageFile = req.file;
+
+  if (!imageFile) {
+    return res.status(400).json({ error: "No image file provided" });
+  }
+
+  const user = await User.findOne({ clerkId: userId });
+  if (!user) return res.status(404).json({ error: "User not found" });
+
+  try {
+    const base64Image = `data:${
+      imageFile.mimetype
+    };base64,${imageFile.buffer.toString("base64")}`;
+
+    const uploadResponse = await cloudinary.uploader.upload(base64Image, {
+      folder: "social_media_profile",
+      resource_type: "image",
+      transformation: [
+        { width: 400, height: 400, crop: "limit" },
+        { quality: "auto" },
+        { format: "auto" },
+      ],
+    });
+
+    user.profilePicture = uploadResponse.secure_url;
+    await user.save();
+
+    res.status(200).json({
+      message: "Profile image updated successfully",
+      user,
+    });
+  } catch (uploadError) {
+    console.error("Cloudinary upload error:", uploadError);
+    return res.status(400).json({ error: "Failed to upload image" });
+  }
+});
+
+export const updateBannerImage = asyncHandler(async (req, res) => {
+  const { userId } = getAuth(req);
+  const imageFile = req.file;
+
+  if (!imageFile) {
+    return res.status(400).json({ error: "No image file provided" });
+  }
+
+  const user = await User.findOne({ clerkId: userId });
+  if (!user) return res.status(404).json({ error: "User not found" });
+
+  try {
+    const base64Image = `data:${
+      imageFile.mimetype
+    };base64,${imageFile.buffer.toString("base64")}`;
+
+    const uploadResponse = await cloudinary.uploader.upload(base64Image, {
+      folder: "social_media_banners",
+      resource_type: "image",
+      transformation: [
+        { width: 1200, height: 400, crop: "limit" },
+        { quality: "auto" },
+        { format: "auto" },
+      ],
+    });
+
+    user.bannerImage = uploadResponse.secure_url;
+    await user.save();
+
+    res.status(200).json({
+      message: "Banner image updated successfully",
+      user,
+    });
+  } catch (uploadError) {
+    console.error("Cloudinary upload error:", uploadError);
+    return res.status(400).json({ error: "Failed to upload image" });
+  }
 });
