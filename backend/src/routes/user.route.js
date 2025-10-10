@@ -7,8 +7,11 @@ import {
   updateProfile,
   getFollowers,   
   getFollowing,
+  updateProfileImage, 
+  updateBannerImage,
 } from "../controllers/user.controller.js";
 import { protectRoute } from "../middleware/auth.middleware.js";
+import upload from "../middleware/upload.middleware.js";
 
 const router = express.Router();
 
@@ -22,5 +25,20 @@ router.post("/sync", protectRoute, syncUser);
 router.get("/me", protectRoute, getCurrentUser);
 router.put("/profile", protectRoute, updateProfile);
 router.post("/follow/:targetUserId", protectRoute, followUser);
+
+// profile and banner image upload handling
+router.put(
+  "/profile/profile-image",
+  protectRoute,
+  upload.single("profileImage"), 
+  updateProfileImage
+);
+
+router.put(
+  "/profile/banner-image",
+  protectRoute,
+  upload.single("bannerImage"), 
+  updateBannerImage
+);
 
 export default router;
