@@ -28,10 +28,8 @@ const HomeScreen = () => {
   useUserSync();
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      {/* --- 👇 ENTIRE HEADER VIEW IS REPLACED --- */}
+    <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
       <View className="flex-row justify-between items-center px-4 py-3 border-b border-gray-100">
-        {/* Left Side: Profile Picture */}
         <Link href={`/profile/${currentUser?.username}`}>
           <Image
             source={{ uri: currentUser?.profilePicture }}

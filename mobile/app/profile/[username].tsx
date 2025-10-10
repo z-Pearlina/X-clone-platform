@@ -2,7 +2,7 @@ import EditProfileModal from "@/components/EditProfileModal";
 import PostsList from "@/components/PostsList";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useProfile } from "@/hooks/useProfile";
-import { Feather, Ionicons } from "@expo/vector-icons"; // <-- CHANGE: Import Ionicons
+import { Feather, Ionicons } from "@expo/vector-icons";
 import { format } from "date-fns";
 import {
   View,
@@ -14,13 +14,13 @@ import {
   RefreshControl,
 } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
-import { Link, useLocalSearchParams, useRouter } from "expo-router"; 
+import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { useUser } from "@/hooks/useUser";
 import { usePosts } from "@/hooks/usePosts";
 import { useFollow } from "@/hooks/useFollow";
 
 const ProfileScreen = () => {
-  const router = useRouter(); 
+  const router = useRouter();
   const { username } = useLocalSearchParams<{ username: string }>();
   const { user: profileUser, isLoading, refetch: refetchProfile } = useUser(username);
   const { currentUser } = useCurrentUser();
@@ -34,6 +34,7 @@ const ProfileScreen = () => {
     refetch: refetchPosts,
     isLoading: isRefetching,
   } = usePosts(username);
+
   const {
     isEditModalVisible,
     openEditModal,
@@ -42,6 +43,9 @@ const ProfileScreen = () => {
     saveProfile,
     updateFormField,
     isUpdating,
+    handleImageSelection,
+    isUploadingProfileImage,
+    isUploadingBannerImage,
   } = useProfile();
 
   if (isLoading || !profileUser) {
@@ -54,27 +58,20 @@ const ProfileScreen = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
-      
       <View className="flex-row items-center justify-between px-4 py-2 border-b border-gray-100">
-        {/* Left: Back Arrow */}
         <TouchableOpacity onPress={() => router.back()} className="w-10">
           <Ionicons name="arrow-back" size={24} color="#1DA1F2" />
         </TouchableOpacity>
-
-        
         <View className="items-center">
           <Text className="text-lg font-bold text-gray-900">
             {profileUser.firstName} {profileUser.lastName}
           </Text>
           <Text className="text-gray-500 text-sm">{userPosts.length} Posts</Text>
         </View>
-
-        
         <TouchableOpacity onPress={() => {}} className="w-10 items-end">
           <Feather name="more-horizontal" size={24} color="#1DA1F2" />
         </TouchableOpacity>
       </View>
-     
 
       <ScrollView
         className="flex-1"
@@ -91,12 +88,11 @@ const ProfileScreen = () => {
           />
         }
       >
-        
         <Image
           source={{
             uri:
               profileUser.bannerImage ||
-              "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=400&fit=crop",
+              "https://p1.pxfuel.com/preview/349/564/927/banner-header-grey-background.jpg",
           }}
           className="w-full h-48"
           resizeMode="cover"
@@ -104,10 +100,12 @@ const ProfileScreen = () => {
 
         <View className="px-4 pb-4 border-b border-gray-100">
           <View className="flex-row justify-between items-end -mt-16 mb-4">
-            <Image
-              source={{ uri: profileUser.profilePicture }}
-              className="w-32 h-32 rounded-full border-4 border-white"
-            />
+            <View className="bg-white p-1 rounded-full">
+              <Image
+                source={{ uri: profileUser.profilePicture }}
+                className="w-32 h-32 rounded-full border-4 border-white"
+              />
+            </View>
             {isMyProfile ? (
               <TouchableOpacity
                 className="border border-gray-300 px-6 py-2 rounded-full"
@@ -192,6 +190,10 @@ const ProfileScreen = () => {
           saveProfile={saveProfile}
           updateFormField={updateFormField}
           isUpdating={isUpdating}
+          currentUser={profileUser}
+          handleImageSelection={handleImageSelection}
+          isUploadingProfileImage={isUploadingProfileImage}
+          isUploadingBannerImage={isUploadingBannerImage}
         />
       )}
     </SafeAreaView>

@@ -28,11 +28,25 @@ export const useApiClient = (): AxiosInstance => {
 export const userApi = {
   syncUser: (api: AxiosInstance) => api.post("/users/sync"),
   getCurrentUser: (api: AxiosInstance) => api.get("/users/me"),
-    getUserProfile: (api: AxiosInstance, username: string) => api.get(`/users/profile/${username}`),
-    updateProfile: (api: AxiosInstance, data: any) => api.put("/users/profile", data),
-    followUser: (api: AxiosInstance, targetUserId: string) => api.post(`/users/follow/${targetUserId}`),
-    getFollowers: (api: AxiosInstance, username: string) => api.get(`/users/profile/${username}/followers`),
-    getFollowing: (api: AxiosInstance, username: string) => api.get(`/users/profile/${username}/following`),
+  getUserProfile: (api: AxiosInstance, username: string) => api.get(`/users/profile/${username}`),
+  updateProfile: (api: AxiosInstance, data: any) => api.put("/users/profile", data),
+  followUser: (api: AxiosInstance, targetUserId: string) =>
+    api.post(`/users/follow/${targetUserId}`),
+  getFollowers: (api: AxiosInstance, username: string) =>
+    api.get(`/users/profile/${username}/followers`),
+  getFollowing: (api: AxiosInstance, username: string) =>
+    api.get(`/users/profile/${username}/following`),
+
+  // 🔽 --- ADD THE FOLLOWING TWO FUNCTIONS --- 🔽
+  updateProfileImage: (api: AxiosInstance, formData: FormData) =>
+    api.put("/users/profile/profile-image", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    }),
+
+  updateBannerImage: (api: AxiosInstance, formData: FormData) =>
+    api.put("/users/profile/banner-image", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    }),
 };
 
 export const postApi = {
@@ -45,6 +59,7 @@ export const postApi = {
 };
 
 export const commentApi = {
-  createComment: (api: AxiosInstance, postId: string, content: string) => api.post(`/comments/post/${postId}`, { content }),
+  createComment: (api: AxiosInstance, postId: string, content: string) =>
+    api.post(`/comments/post/${postId}`, { content }),
   deleteComment: (api: AxiosInstance, commentId: string) => api.delete(`/comments/${commentId}`),
 };

@@ -1,5 +1,5 @@
 import { useCreatePost } from "@/hooks/useCreatePost";
-import { useUser } from "@clerk/clerk-expo";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { Feather } from "@expo/vector-icons";
 import { View, Text, Image, TextInput, TouchableOpacity, ActivityIndicator } from "react-native";
 
@@ -15,12 +15,23 @@ const PostComposer = () => {
     createPost,
   } = useCreatePost();
 
-  const { user } = useUser();
+  const { currentUser, isLoading } = useCurrentUser();
+
+  if (isLoading || !currentUser) {
+    return (
+      <View className="p-4 bg-white border-b border-gray-100">
+        <ActivityIndicator />
+      </View>
+    );
+  }
 
   return (
     <View className="border-b border-gray-100 p-4 bg-white">
       <View className="flex-row">
-        <Image source={{ uri: user?.imageUrl }} className="w-12 h-12 rounded-full mr-3" />
+        <Image
+          source={{ uri: currentUser?.profilePicture }}
+          className="w-12 h-12 rounded-full mr-3"
+        />
         <View className="flex-1">
           <TextInput
             className="text-gray-900 text-lg"
