@@ -1,23 +1,25 @@
 import PostComposer from "@/components/PostComposer";
 import PostsList from "@/components/PostsList";
-import { useCurrentUser } from "@/hooks/useCurrentUser"; 
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { usePosts } from "@/hooks/usePosts";
 import { useUserSync } from "@/hooks/useUserSync";
 import { Ionicons } from "@expo/vector-icons";
-import { Link, useRouter } from "expo-router"; 
+import { Link } from "expo-router"; 
 import { useState } from "react";
-import { RefreshControl, ScrollView, Text, View, Image, TouchableOpacity } from "react-native";
+import {
+  RefreshControl,
+  ScrollView,
+  View,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const HomeScreen = () => {
   const [isRefetching, setIsRefetching] = useState(false);
   const { refetch: refetchPosts } = usePosts();
 
-
-  
   const { currentUser } = useCurrentUser();
-
-  
 
   const handlePullToRefresh = async () => {
     setIsRefetching(true);
@@ -37,14 +39,16 @@ const HomeScreen = () => {
           />
         </Link>
 
-        
         <Ionicons name="logo-twitter" size={24} color="#1DA1F2" />
 
-        <TouchableOpacity>
-          <Ionicons name="settings-outline" size={24} color="#1DA1F2" />
-        </TouchableOpacity>
+        
+        <Link href="/settings" asChild>
+          <TouchableOpacity>
+            <Ionicons name="settings-outline" size={24} color="#1DA1F2" />
+          </TouchableOpacity>
+        </Link>
+        
       </View>
-      {/* --- 👆 END OF REPLACED HEADER --- */}
 
       <ScrollView
         showsVerticalScrollIndicator={false}

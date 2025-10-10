@@ -29,38 +29,53 @@ const TabsLayout = () => {
         name="index"
         options={{
           title: "",
-          tabBarIcon: ({ color, size }) => <Feather name="home" size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="home" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="search"
         options={{
           title: "",
-
-          tabBarIcon: ({ color, size }) => <Feather name="search" size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="search" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="notifications"
         options={{
           title: "",
-
-          tabBarIcon: ({ color, size }) => <Feather name="bell" size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="bell" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="messages"
         options={{
           title: "",
-
-          tabBarIcon: ({ color, size }) => <Feather name="mail" size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="mail" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
           title: "",
-          tabBarIcon: ({ color, size }) => <Feather name="user" size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="user" size={size} color={color} />
+          ),
+        }}
+      />
+
+      
+      <Tabs.Screen
+        name="settings"
+        options={{
+          href: null,
         }}
       />
     </Tabs>
