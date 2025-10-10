@@ -65,12 +65,12 @@ It combines powerful backend architecture, cloud image management, and a smooth 
 ## 📸 App Screens
 
 <p align="center">
-  <img src="https://github.com/z-Pearlina/X-clone-platform/blob/main/mobile/assets/screenshoots/1.png" width="150" />
-  <img src="https://github.com/z-Pearlina/X-clone-platform/blob/main/mobile/assets/screenshoots/2.png" width="150" />
-  <img src="https://github.com/z-Pearlina/X-clone-platform/blob/main/mobile/assets/screenshoots/3.png" width="150" />
-  <img src="https://github.com/z-Pearlina/X-clone-platform/blob/main/mobile/assets/screenshoots/4.png" width="150" />
-  <img src="https://github.com/z-Pearlina/X-clone-platform/blob/main/mobile/assets/screenshoots/5.png" width="150" />
-  <img src="https://github.com/z-Pearlina/X-clone-platform/blob/main/mobile/assets/screenshoots/6.png" width="150" />
+  <img src="https://github.com/z-Pearlina/X-clone-platform/blob/main/mobile/assets/screenshoots/1.png" width="200" />
+  <img src="https://github.com/z-Pearlina/X-clone-platform/blob/main/mobile/assets/screenshoots/2.png" width="200" />
+  <img src="https://github.com/z-Pearlina/X-clone-platform/blob/main/mobile/assets/screenshoots/3.png" width="200" />
+  <img src="https://github.com/z-Pearlina/X-clone-platform/blob/main/mobile/assets/screenshoots/4.png" width="200" />
+  <img src="https://github.com/z-Pearlina/X-clone-platform/blob/main/mobile/assets/screenshoots/5.png" width="200" />
+  <img src="https://github.com/z-Pearlina/X-clone-platform/blob/main/mobile/assets/screenshoots/6.png" width="200" />
 </p>
 
 ---
