@@ -2,7 +2,7 @@ import EditProfileModal from "@/components/EditProfileModal";
 import PostsList from "@/components/PostsList";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useProfile } from "@/hooks/useProfile";
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons"; // <-- CHANGE: Import Ionicons
 import { format } from "date-fns";
 import {
   View,
@@ -14,13 +14,13 @@ import {
   RefreshControl,
 } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
-import { Link, useLocalSearchParams, useRouter } from "expo-router";
+import { Link, useLocalSearchParams, useRouter } from "expo-router"; 
 import { useUser } from "@/hooks/useUser";
 import { usePosts } from "@/hooks/usePosts";
 import { useFollow } from "@/hooks/useFollow";
 
 const ProfileScreen = () => {
-  const router = useRouter();
+  const router = useRouter(); 
   const { username } = useLocalSearchParams<{ username: string }>();
   const { user: profileUser, isLoading, refetch: refetchProfile } = useUser(username);
   const { currentUser } = useCurrentUser();
@@ -34,7 +34,6 @@ const ProfileScreen = () => {
     refetch: refetchPosts,
     isLoading: isRefetching,
   } = usePosts(username);
- 
   const {
     isEditModalVisible,
     openEditModal,
@@ -43,10 +42,6 @@ const ProfileScreen = () => {
     saveProfile,
     updateFormField,
     isUpdating,
-    selectedProfilePic,
-    selectedBanner,
-    pickProfileImage,
-    pickBannerImage,
   } = useProfile();
 
   if (isLoading || !profileUser) {
@@ -59,20 +54,27 @@ const ProfileScreen = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
+      
       <View className="flex-row items-center justify-between px-4 py-2 border-b border-gray-100">
+        {/* Left: Back Arrow */}
         <TouchableOpacity onPress={() => router.back()} className="w-10">
           <Ionicons name="arrow-back" size={24} color="#1DA1F2" />
         </TouchableOpacity>
+
+        
         <View className="items-center">
           <Text className="text-lg font-bold text-gray-900">
             {profileUser.firstName} {profileUser.lastName}
           </Text>
           <Text className="text-gray-500 text-sm">{userPosts.length} Posts</Text>
         </View>
+
+        
         <TouchableOpacity onPress={() => {}} className="w-10 items-end">
           <Feather name="more-horizontal" size={24} color="#1DA1F2" />
         </TouchableOpacity>
       </View>
+     
 
       <ScrollView
         className="flex-1"
@@ -89,13 +91,14 @@ const ProfileScreen = () => {
           />
         }
       >
+        
         <Image
           source={{
             uri:
-              profileUser.bannerImage || 
+              profileUser.bannerImage ||
               "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=400&fit=crop",
           }}
-          className="w-full h-48 bg-gray-200"
+          className="w-full h-48"
           resizeMode="cover"
         />
 
@@ -103,7 +106,7 @@ const ProfileScreen = () => {
           <View className="flex-row justify-between items-end -mt-16 mb-4">
             <Image
               source={{ uri: profileUser.profilePicture }}
-              className="w-32 h-32 rounded-full border-4 border-white bg-gray-200"
+              className="w-32 h-32 rounded-full border-4 border-white"
             />
             {isMyProfile ? (
               <TouchableOpacity
@@ -181,20 +184,14 @@ const ProfileScreen = () => {
         <PostsList username={profileUser?.username} />
       </ScrollView>
 
-      {/* Pass all the required props down to the EditProfileModal */}
       {isMyProfile && (
         <EditProfileModal
           isVisible={isEditModalVisible}
           onClose={closeEditModal}
-          currentUser={currentUser}
           formData={formData}
           saveProfile={saveProfile}
           updateFormField={updateFormField}
           isUpdating={isUpdating}
-          selectedProfilePic={selectedProfilePic}
-          selectedBanner={selectedBanner}
-          pickProfileImage={pickProfileImage}
-          pickBannerImage={pickBannerImage}
         />
       )}
     </SafeAreaView>

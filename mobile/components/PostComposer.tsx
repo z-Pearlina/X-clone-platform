@@ -95,4 +95,4 @@ const PostComposer = () => {
     </View>
   );
 };
-export default PostComposer; 
+export default PostComposer;
