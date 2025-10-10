@@ -3,8 +3,7 @@ import User from "../models/user.model.js";
 import Notification from "../models/notification.model.js";
 import { getAuth } from "@clerk/express";
 import { clerkClient } from "@clerk/express";
-import cloudinary from "../config/cloudinary.js"; 
-
+import cloudinary from "../config/cloudinary.js";
 
 const uploadToCloudinary = (fileBuffer, folder) => {
   return new Promise((resolve, reject) => {
@@ -29,10 +28,9 @@ export const getUserProfile = asyncHandler(async (req, res) => {
   res.status(200).json({ user });
 });
 
-
 export const updateProfile = asyncHandler(async (req, res) => {
   const { userId } = getAuth(req);
-  const { firstName, lastName, bio } = req.body; // Get text fields from body
+  const { firstName, lastName, bio } = req.body;
 
   const updatedData = {
     firstName,
@@ -47,10 +45,12 @@ export const updateProfile = asyncHandler(async (req, res) => {
       updatedData.profilePicture = uploadResponse.secure_url;
     }
 
+    // CHANGE: Check for 'banner' file from req.files
     if (req.files?.banner) {
       const bannerFile = req.files.banner[0];
-      const uploadResponse = await uploadToCloudinary(bannerFile.buffer, "banners");
-      updatedData.banner = uploadResponse.secure_url;
+      const uploadResponse = await uploadToCloudinary(bannerFile.buffer, "banner_images");
+      // CHANGE: Save the URL to the 'bannerImage' property to match the model
+      updatedData.bannerImage = uploadResponse.secure_url;
     }
   } catch (uploadError) {
     console.error("Cloudinary upload error during profile update:", uploadError);
@@ -59,7 +59,7 @@ export const updateProfile = asyncHandler(async (req, res) => {
 
   const user = await User.findOneAndUpdate(
     { clerkId: userId },
-    { $set: updatedData }, 
+    { $set: updatedData },
     { new: true }
   );
 
@@ -69,7 +69,6 @@ export const updateProfile = asyncHandler(async (req, res) => {
 
   res.status(200).json({ user });
 });
-
 
 export const syncUser = asyncHandler(async (req, res) => {
   const { userId } = getAuth(req);

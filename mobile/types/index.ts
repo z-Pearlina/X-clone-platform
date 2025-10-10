@@ -1,24 +1,33 @@
 export interface User {
   _id: string;
+  clerkId: string;
+  email: string;
   username: string;
   firstName: string;
   lastName: string;
   profilePicture?: string;
+  bannerImage?: string; 
+  bio?: string; 
+  location?: string; 
+  followers?: string[]; 
+  following?: string[]; 
+  createdAt: string; 
+  updatedAt: string; 
 }
 
 export interface Comment {
   _id: string;
   content: string;
   createdAt: string;
-  user: User;
+  user: User; 
 }
 
 export interface Post {
-  _id: string;
+  _id:string;
   content: string;
   image?: string;
   createdAt: string;
-  user: User;
+  user: User; 
   likes: string[];
   comments: Comment[];
 }
