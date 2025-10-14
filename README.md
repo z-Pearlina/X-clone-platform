@@ -71,6 +71,8 @@ It combines powerful backend architecture, cloud image management, and a smooth 
   <img src="https://github.com/z-Pearlina/X-clone-platform/blob/main/mobile/assets/screenshoots/4.png" width="200" />
   <img src="https://github.com/z-Pearlina/X-clone-platform/blob/main/mobile/assets/screenshoots/5.png" width="200" />
   <img src="https://github.com/z-Pearlina/X-clone-platform/blob/main/mobile/assets/screenshoots/6.png" width="200" />
+  <img src="https://github.com/z-Pearlina/X-clone-platform/blob/main/mobile/assets/screenshoots/7.png" width="200" />
+  <img src="https://github.com/z-Pearlina/X-clone-platform/blob/main/mobile/assets/screenshoots/8.png" width="200" />
 </p>
 
 ---
